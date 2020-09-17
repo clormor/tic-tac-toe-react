@@ -10,46 +10,41 @@ function Square(props) {
   );
 }
 
-class Board extends React.Component {
-  renderSquare(i) {
-    // create a square with a unique value (position)
-    return (
-      <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-      />
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
+function Row(props) {
+  let rowNum = props.rowNum;
+  let start = 3 * rowNum;
+  let renderSquare = (i) => (
+    <Square value={props.squares[i]} onClick={() => props.onClick(i)} />
+  );
+  return (
+    <div className="board-row">
+      {renderSquare(start++)}
+      {renderSquare(start++)}
+      {renderSquare(start++)}
+    </div>
+  );
 }
+
+function Board(props) {
+  let renderRow = (i) => (
+    <Row rowNum={i} squares={props.squares} onClick={props.onClick} />
+  );
+  return (
+    <div>
+      {renderRow(0)}
+      {renderRow(1)}
+      {renderRow(2)}
+    </div>
+  );
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null),
+          squares: Array.of({ length: 9 }).fill(null),
         },
       ],
       xIsNext: this.isXNext(0),
@@ -70,7 +65,7 @@ class Game extends React.Component {
   }
 
   renderHistoryButton(moveNumber) {
-    let desc = moveNumber ? "b" : "a";
+    let desc = moveNumber ? `Move ${moveNumber}` : "Restart";
     return (
       <li key={moveNumber}>
         <button onClick={() => this.jumpTo(moveNumber)}>{desc}</button>
@@ -112,7 +107,7 @@ class Game extends React.Component {
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.moveNumber + 1);
     const current = history[this.state.moveNumber];
-    const squares = current.squares.slice();
+    const squares = Array.of(current.squares);
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
