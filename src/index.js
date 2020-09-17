@@ -48,37 +48,37 @@ class Game extends React.Component {
         },
       ],
       xIsNext: this.isXNext(0),
-      moveNumber: 0,
+      move: 0,
     };
   }
 
-  isXNext(moveNumber) {
-    return moveNumber % 2 === 0;
+  isXNext(move) {
+    return move % 2 === 0;
   }
 
-  jumpTo(moveNumber) {
+  jumpTo(move) {
     this.setState({
       history: this.state.history,
-      xIsNext: this.isXNext(moveNumber),
-      moveNumber: moveNumber,
+      xIsNext: this.isXNext(move),
+      move,
     });
   }
 
-  renderHistoryButton(moveNumber) {
-    let desc = moveNumber ? `Move ${moveNumber}` : "Restart";
+  renderHistoryButton(move) {
+    let desc = move ? `Move ${move + 1}` : "Restart";
     return (
-      <li key={moveNumber}>
-        <button onClick={() => this.jumpTo(moveNumber)}>{desc}</button>
+      <li key={move}>
+        <button onClick={() => this.jumpTo(move)}>{desc}</button>
       </li>
     );
   }
 
   render() {
     const history = this.state.history;
-    const current = history[this.state.moveNumber];
+    const current = history[this.state.move];
     const winner = calculateWinner(current.squares);
-    let historyButtons = history.map((_board, moveNumber) =>
-      this.renderHistoryButton(moveNumber)
+    let historyButtons = history.map((_board, move) =>
+      this.renderHistoryButton(move)
     );
 
     let status;
@@ -105,20 +105,18 @@ class Game extends React.Component {
   }
 
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.moveNumber + 1);
-    const current = history[this.state.moveNumber];
-    const squares = Array.of(current.squares);
+    let move = this.state.move;
+    let history = this.state.history.slice(0, move + 1);
+    let current = history[move];
+    let squares = Array.from(current.squares);
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
+    history.push({ squares });
     this.setState({
-      history: history.concat([
-        {
-          squares: squares,
-        },
-      ]),
-      moveNumber: history.length,
+      history,
+      move: ++move,
       xIsNext: !this.state.xIsNext,
     });
   }
