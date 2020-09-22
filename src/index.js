@@ -39,18 +39,15 @@ function Board(props) {
 }
 
 class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array.of({ length: 9 }).fill(null),
-        },
-      ],
-      xIsNext: this.isXNext(0),
-      move: 0,
-    };
-  }
+  state = {
+    history: [
+      {
+        squares: Array.of({ length: 9 }).fill(null),
+      },
+    ],
+    xIsNext: this.isXNext(0),
+    move: 0,
+  };
 
   isXNext(move) {
     return move % 2 === 0;
