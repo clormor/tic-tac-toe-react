@@ -46,13 +46,15 @@ function Game() {
     },
   ];
 
-  const [xIsNext, setXIsNext] = useState(isXNext(0));
   const [history, setHistory] = useState(initialHistory);
   const [move, setMove] = useState(0);
+  const xIsNext = isXNext(move);
+  const current = history[move];
+  const winner = calculateWinner(current.squares);
+  let historyButtons = history.map((_board, move) => renderHistoryButton(move));
 
   function jumpTo(move) {
     setMove(() => move);
-    setXIsNext(isXNext(move));
   }
 
   function renderHistoryButton(move) {
@@ -63,10 +65,6 @@ function Game() {
       </li>
     );
   }
-
-  const current = history[move];
-  const winner = calculateWinner(current.squares);
-  let historyButtons = history.map((_board, move) => renderHistoryButton(move));
 
   let status;
   if (winner) {
@@ -96,7 +94,6 @@ function Game() {
     squares[i] = xIsNext ? "X" : "O";
     newHistory.push({ squares });
     setMove((prevMove) => ++prevMove);
-    setXIsNext((prevXIsNext) => !prevXIsNext);
     setHistory(() => newHistory);
   }
 }
